@@ -1,0 +1,80 @@
+The crime_data is given in excel, the purpose this project was to create a normalized database which can store all the given data.
+
+
+1. Give a list of the entities and their attributes. Briefly describe each entity and datatype that you will be using in the design.
+
+These are the final normalized tables
+
+State:  state_code{PK}, state_name
+CrimeType: crime_type_id{PK}, crime_category, crime_name
+Crime: crime_id, crime_type_id{FK}, state_code{FK}, year, crime_count
+StatePopulation: state_code{FK}{PK1}, year{PK2}, population, property_crime_total, violent_crime_total 
+CrimeRate: state_code{FK1}{PK1}, year{FK2}{PK2}, crime_type_id{FK}{PK3}, crime_rate_10000
+
+
+2. Identify the relationships, primary keys, candidate keys, etc.
+
+See the attached summar pdf file
+
+
+3. Normalize. (1NF, 2NF, 3NF, and higher normal forms as needed)
+
+All tables are normalized. There is no possible redundancy
+
+1NF satisfied
+There are no duplicate rows.
+Every row-and-column intersection contains exactly one value from the applicable domain (and nothing else).
+2NF satisfied
+No non-prime attribute is dependent on any proper subset of any candidate key of the relation.
+3NF
+No transitive dependecy
+
+
+4. Create the Entity Relation Diagram that works best.
+See the attached pdf file or png image
+5. Explain any and all decisions.
+
+* all crime happenings of Murder in Newyork for particular year and population are stored as one value
+* one particular crimetype in newyork state can occur multiple times in different years
+* 1NF is easily satisfied 
+    by not including more than one value in one cell
+    by having a primary key which uniquely identifies rows 
+    no duplicate rows
+* we don't need population inside Crime Table(it violated 3NF)
+
+This table violates 3NF
+
+Crime: crime_id, crime_type_id{FK}, state_code{FK}, year, population, crime_count
+
+crime_id --> population
+crime_id --> state, year
+state, year --> population
+
+A new table called StatePopulation was created, (state_code, year, population) was the primary key
+
+StatePopulation: state_code{FK}{PK1}, year{PK2}, population{PK3}, property_crime_total, violent_crime_total 
+
+
+* Removed Partial Dependency
+The primary key for StatePopualation was (statecode, year, population) 
+
+(statecode and year) --> population
+
+(statecode and year)--> property_crime total
+
+(statecode,year, population) --> property_crime _total
+
+See that poperty_crime total is dependent on part of the primary key
+
+(statecode and year) is a candidate key
+
+(statecode,year, population) is also a candidate key
+
+The solution will be to choose the smallest candidate key.
+
+This is the final table for StatePopulation
+
+StatePopulation: state_code{FK}{PK1}, year{PK2}, population, property_crime_total, violent_crime_total 
+
+
+
