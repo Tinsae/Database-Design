@@ -1,0 +1,7 @@
+"name","type"
+"CMS_Cert_Number","INT"
+"Offers Nursing Care Services","VARCHAR(3)"
+"Offers Physical Therapy Services","VARCHAR(3)"
+"Offers Occupational Therapy Services","VARCHAR(3)"
+"Test","VARCHAR(3)"
+"Offers Home Health Aide Services","VARCHAR(3)"

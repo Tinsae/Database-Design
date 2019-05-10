@@ -1,0 +1,269 @@
+-- CREATE DATABASE [Pulido.Test4];
+USE [Pulido.Test4];
+
+DROP TABLE
+IF EXISTS Product ; DROP TABLE
+IF EXISTS Category ; CREATE TABLE Category (
+	CID INT NOT NULL IDENTITY PRIMARY KEY,
+	Description VARCHAR (50) NOT NULL
+);
+
+CREATE TABLE Product (
+	PID INT NOT NULL IDENTITY PRIMARY KEY,
+	Description VARCHAR (50) NOT NULL,
+	CID INT,
+	COST FLOAT NOT NULL,
+	SalePrice FLOAT NOT NULL,
+	AvailableOnline CHAR (1) NOT NULL,
+	CONSTRAINT FK_CategoryProduct FOREIGN KEY (CID) REFERENCES Category (CID),
+	CONSTRAINT CHK_YorN CHECK (AvailableOnline IN('Y', 'N')),
+	CONSTRAINT CHK_Pos_Cost CHECK (Cost >= 0),
+	CONSTRAINT CHK_Pos_Price CHECK (SalePrice >= 0)
+);
+
+-- Insert to category
+INSERT INTO Category (Description)
+VALUES
+	('Bicycles');
+
+INSERT INTO Category (Description)
+VALUES
+	('Components');
+
+INSERT INTO Category (Description)
+VALUES
+	('Accessories');
+
+-- Insert this to product
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Schwinn Beach Cruiser',
+		1,
+		79.99,
+		159.99,
+		'N'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Diamondback Mountain Bike',
+		1,
+		1449.99,
+		2799.99,
+		'N'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Cannondale Touring Bicycle',
+		1,
+		299.00,
+		625.00,
+		'N'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Shimano Disc Brake',
+		2,
+		69.89,
+		149.99,
+		'Y'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Shimano Derailleur',
+		2,
+		117.88,
+		229.99,
+		'Y'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Nitto Mustache Alloy Bar',
+		2,
+		74.99,
+		94.99,
+		'N'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Crank Brothers Gem Pump',
+		3,
+		12.79,
+		19.99,
+		'Y'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Shimano Pro Torque Wrench',
+		3,
+		57.99,
+		139.99,
+		'Y'
+	);
+
+INSERT INTO Product (
+	Description,
+	CID,
+	COST,
+	SalePrice,
+	AvailableOnline
+)
+VALUES
+	(
+		'Thule Passage 2 Trunk Rack',
+		3,
+		126.95,
+		149.95,
+		'N'
+	);
+
+DROP VIEW ProductProfit;
+CREATE VIEW ProductProfit AS SELECT
+	Category.Description AS Category,
+	Product.Description AS Item,
+	Product.SalePrice - Product.Cost AS Profit
+FROM
+	Category
+INNER JOIN Product ON Category.CID = Product.CID;
+
+
+
+-- (#3b){Screenshot.} Using the ProductProfit VIEW,
+-- display the records that are in the TOP 10 Percent of Profit.
+-- The screenshot should show the SELECT statement and the records returned.
+
+SELECT TOP 10 PERCENT Profit
+FROM ProductProfit
+ORDER BY Profit;
+
+-- (#4a){Screen shot.} Create a VIEW named FamilyRide that displays the 
+-- Category description, the Product Description, the Cost and the SalePrice. 
+-- Name the Category description column ‘Category’ and the Product description
+-- ‘Item’. The screenshot should show the SQL code to create the view and
+-- a SELECT statement displaying the records returned in ascending order
+-- of the Item column.
+
+DROP VIEW FamilyRide;
+CREATE VIEW FamilyRide AS
+SELECT Category.Description AS Category,
+ Product.Description AS Item,
+ Product.Cost,
+ Product.SalePrice
+FROM
+    Category
+INNER JOIN Product ON Category.CID = Product.CID;
+
+
+-- (#4b){Screen shot.} Use the FamilyRide VIEW to update
+-- the SalePrice of all components to
+-- reflect a price increase of 5%. 
+-- The screenshot should show the SQL code and a SELECT statement
+-- displaying the updated records returned in descending 
+-- order of the SalePrice.
+
+UPDATE FamilyRide 
+SET SalePrice = SalePrice * 1.05;
+
+SELECT * FROM FamilyRide
+ORDER BY SalePrice ASC;
+
+--(#5){Screen Shot} Edit the script so it will execute. 
+--Display the SQL code and the output.
+USE [Pulido.Test4];
+DECLARE @ProductCount INT;
+SELECT @ProductCount = COUNT(*)
+FROM Product;
+IF @ProductCount >= 5
+PRINT 'The number of products is greater than or equal to 5';
+ELSE
+PRINT 'The number of products is less than 5';
+
+
+
+
+--(#6){Screen shot} Edit the script so it will execute.
+--Display the SQL code and the output.
+
+USE [Pulido.Test4];
+BEGIN TRY
+INSERT Category (DESCRIPTION)
+VALUES ('Clothing');
+PRINT 'SUCCESS: Record was inserted.';
+END TRY
+BEGIN CATCH
+PRINT 'FAILURE: Record was not inserted.';
+PRINT 'Error ' + CONVERT(VARCHAR, ERROR_NUMBER(), 1)
+ + ': ' + ERROR_MESSAGE();
+END CATCH;
+
+
+--(#7){Screen shot} Write a script that removes the view, the two tables, 
+--and the database, with one click of the execute button. 
+--In the screen shot, display all the SQL code, 
+--and show the Object Explorer after the script executes.
+DROP VIEW FamilyRide;
+DROP TABLE Product;
+DROP TABLE Category;
+DROP DATABASE [Pulido.Test4];
